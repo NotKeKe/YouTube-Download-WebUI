@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-8127}:8127"
+    env_file:
+      - .env
+    environment:
+      RUNNING_IN_DOCKER: "1"
+    volumes:
+      - .:/app
+    restart: unless-stopped
