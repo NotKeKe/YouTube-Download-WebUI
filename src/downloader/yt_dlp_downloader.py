@@ -71,12 +71,6 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
 
                         subtitles[lang].append(resp.text) # must be srt
 
-            # just for test
-            import json
-            from pathlib import Path
-            with open(Path(__file__).parent.parent.parent / 'test.json', 'w', encoding='utf-8') as f:
-                json.dump(info, f, indent=4, ensure_ascii=False)
-
             return ExtractInfo.model_validate({
                 "download_url": info.get("url", ''),
                 "thumbnail_url": info.get("thumbnail", ''),
