@@ -35,6 +35,10 @@ async def quality(quality: API.Quality):
     try:
         downloader = Downloader(url, 'meta')
         await downloader.run()
+        assert downloader.data and downloader.data.meta
+        downloader.data.meta.abr.reverse()
+        downloader.data.meta.fps.reverse()
+        downloader.data.meta.resolution.reverse()
         meta = downloader.get_meta()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

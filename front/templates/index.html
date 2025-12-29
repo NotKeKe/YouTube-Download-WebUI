@@ -4,11 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/icon.png">
+    <title>YouTube Downloader</title>
 </head>
 
 <body>
-    <a href="/docs">docs</a>
+    <header>
+        <a href="/" class="logo" target="_blank"><img src="/static/icon.png" alt="Icon">Downloader</a>
+
+        <nav>
+            <a href="/" target="_blank">Home</a>
+            <a href="/docs" target="_blank">Docs</a>
+        </nav>
+
+        <a href="https://www.wales.com.tw" target="_blank">My Website</a>
+    </header>
+
+    <div class="container">
+        <h1>Downloader</h1>
+
+        <div class="form-group">
+            <label for="url">YouTube URL</label>
+            <input type="text" id="url" name="url" placeholder="Enter your YouTube URL">
+        </div>
+
+        <div class="form-group">
+            <label for="media-type">Download Type</label>
+            <select id="media-type" name="media-type">
+                <option value="video+audio">Video + Audio</option>
+                <option value="video">Video</option>
+                <option value="audio">Audio</option>
+            </select>
+        </div>
+
+        <div class="options">
+            <div class="abr form-group">
+                <label for="abr">Audio Bitrate</label>
+                <select name="abr" id="abr">
+                    <option value="-1">Best</option>
+                </select>
+            </div>
+
+            <div class="resolution form-group">
+                <label for="resolution">Resolution</label>
+                <select name="resolution" id="resolution">
+                    <option value="-1">Best</option>
+                </select>
+            </div>
+
+            <div class="fps form-group">
+                <label for="fps">FPS</label>
+                <select name="fps" id="fps">
+                    <option value="-1">Best</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="start-download" onclick="startDownload()" class="btn">Start Download</button>
+        <span class="curr-info">Hello World</span>
+    </div>
+
+    <script src="/static/script.js"></script>
 </body>
 
 </html>
