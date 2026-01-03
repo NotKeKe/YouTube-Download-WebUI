@@ -75,11 +75,27 @@ uv run main.py
 <details>
     <summary>🐳 使用 Docker 部署</summary>
 
-- **clone 專案後，如果缺少 data 與 logs 資料夾，請先手動創建。**
-- 在終端使用以下命令:
-    ```bash
-    docker-compose up -d --build
-    ```
+### 方式 A：直接運行
+如果你不想自行編譯，可以直接使用 docker run 運行：
+```bash
+docker run -d \
+  -p 8127:8127 \
+  -v ./data:/app/data \
+  -v ./logs:/app/logs \
+  --name yt-download-webui \
+  ghcr.io/notkeke/youtube-download-webui:latest
+```
+<small>注意：請確保 data 與 logs 資料夾存在，否則會導致容器無法正常運行。</small>
+
+### 方式 B：使用 Docker Compose 自行編譯
+1. **Clone 專案後，請先手動創建 data 與 logs 資料夾：**
+   ```bash
+   mkdir data logs
+   ```
+2. **在終端執行：**
+   ```bash
+   docker-compose up -d --build
+   ```
 
 </details>
 

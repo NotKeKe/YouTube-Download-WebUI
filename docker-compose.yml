@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT:-8127}:8127"
-    environment:
-      RUNNING_IN_DOCKER: "1"
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs

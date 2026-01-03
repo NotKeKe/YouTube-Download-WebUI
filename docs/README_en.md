@@ -75,11 +75,27 @@ After the program starts, the browser should automatically open `http://localhos
 <details>
     <summary>🐳 Deployment using Docker</summary>
 
-- **After cloning the project, if data and logs folders are missing, please create them manually.**
-- Use the following command in the terminal:
-    ```bash
-    docker-compose up -d --build
-    ```
+### Method A: Direct Run
+If you don't want to build it yourself, you can run it directly using docker run:
+```bash
+docker run -d \
+  -p 8127:8127 \
+  -v ./data:/app/data \
+  -v ./logs:/app/logs \
+  --name yt-download-webui \
+  ghcr.io/notkeke/youtube-download-webui:latest
+```
+<small>Note: Please ensure that the data and logs folders exist, otherwise the container will not run properly.</small>
+
+### Method B: Build with Docker Compose
+1. **After cloning the project, please create the data and logs folders manually:**
+   ```bash
+   mkdir data logs
+   ```
+2. **Execute in the terminal:**
+   ```bash
+   docker-compose up -d --build
+   ```
 
 </details>
 

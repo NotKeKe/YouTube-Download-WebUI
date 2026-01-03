@@ -26,6 +26,9 @@ RUN apk add --no-cache ffmpeg
 
 WORKDIR /app
 
+# 環境變數
+ENV RUNNING_IN_DOCKER=true
+
 # 先複製一次，如果使用者有 .env 的話會再覆蓋掉
 COPY . .
 
