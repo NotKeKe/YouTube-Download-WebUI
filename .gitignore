@@ -12,7 +12,7 @@ wheels/
 
 logs/*
 data/*
-test_export/*
+test_export
 
 test.json
 test.py
