@@ -76,7 +76,7 @@ uv run main.py
     <summary>🐳 使用 Docker 部署</summary>
 
 ### 方式 A：直接运行
-如果你不想自行编译，可以直接使用 docker run 运行：
+直接使用 docker run 运行：
 ```bash
 docker run -d \
   -p 8127:8127 \
@@ -94,7 +94,7 @@ docker run -d \
    ```
 2. **在终端执行：**
    ```bash
-   docker-compose up -d --build
+   docker-compose up -d
    ```
 
 </details>

@@ -76,7 +76,7 @@ After the program starts, the browser should automatically open `http://localhos
     <summary>🐳 Deployment using Docker</summary>
 
 ### Method A: Direct Run
-If you don't want to build it yourself, you can run it directly using docker run:
+Directly run using docker run:
 ```bash
 docker run -d \
   -p 8127:8127 \
@@ -94,7 +94,7 @@ docker run -d \
    ```
 2. **Execute in the terminal:**
    ```bash
-   docker-compose up -d --build
+   docker-compose up -d
    ```
 
 </details>
