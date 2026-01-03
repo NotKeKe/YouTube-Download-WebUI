@@ -1,4 +1,11 @@
 .venv
+__pycache__
 front/dist
 front/node_modules
-__pycache__
+docs
+tests
+
+data/*
+logs/*
+
+*.md
