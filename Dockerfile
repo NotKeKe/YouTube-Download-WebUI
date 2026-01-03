@@ -1,3 +1,17 @@
+# 一階
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /build
+# copy package.json to use Docker layer cache
+COPY front/package.json front/package-lock.json* ./
+RUN npm install
+
+# copy source code and build
+COPY front/ .
+RUN npm run build
+
+
+# 二階
 FROM python:3.14.2-alpine
 
 # 時間設定
@@ -14,4 +28,9 @@ WORKDIR /app
 
 COPY . .
 
+# 複製一階的東西到二階
+COPY --from=frontend-builder /build/dist ./front/dist
+
 RUN uv sync
+
+CMD ["uv", "run", "main.py"]
