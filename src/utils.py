@@ -96,7 +96,7 @@ def safe_filename(title: str) -> str:
         safe = f"_{safe}"
     return safe
 
-async def _download_item(url: str, path: str, max_retries: int = 3, retry_delay: int = 5):
+async def _download_item(url: str, path: str | Path, max_retries: int = 3, retry_delay: int = 5):
     if not url: return
 
     path_obj = Path(path)
@@ -140,5 +140,5 @@ async def _download_item(url: str, path: str, max_retries: int = 3, retry_delay:
     raise RuntimeError(f"Download failed after {max_retries} attempts for {url}")
 
 
-def download_item(url: str, path: str) -> asyncio.Task:
+def download_item(url: str, path: str | Path) -> asyncio.Task:
     return asyncio.create_task(_download_item(url, path))

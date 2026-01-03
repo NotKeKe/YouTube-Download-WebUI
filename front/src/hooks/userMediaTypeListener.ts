@@ -18,7 +18,7 @@ export function userMediaTypeListener() {
         if (!mediaTypeSelect) return;
 
         const handler = async () => {
-            const reqMediaType = (document.getElementById('media-type') as HTMLSelectElement).value;        
+            const reqMediaType = (document.getElementById('media-type') as HTMLSelectElement).value;
             const currInfoSpan = document.querySelector('.curr-info') as HTMLSpanElement;
             const url = (document.getElementById('url') as HTMLInputElement).value;
             const abrDiv = document.querySelector('.abr') as HTMLDivElement;
@@ -132,6 +132,8 @@ export function userMediaTypeListener() {
                     abrSelect.innerHTML += `<option value="${element}">${element}</option>`;
                 });
             }
+
+            currInfoSpan.textContent = `Fetched quality info`;
         }
 
         mediaTypeSelect.addEventListener('change', handler);

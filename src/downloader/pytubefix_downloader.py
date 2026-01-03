@@ -15,8 +15,8 @@ from config import PORT
 logger = logging.getLogger(__name__)
 
 class PyTubeDownloader(AbstractDownloader):
-    def __init__(self, url: str, req_type: DownloadType, abr: int = -1, resolution: int = -1, fps: int = -1, to_h264: bool = False):
-        super().__init__(url, req_type, abr, resolution, fps, to_h264)
+    def __init__(self, url: str, req_type: DownloadType, abr: int = -1, resolution: int = -1, fps: int = -1, to_h264: bool = False, download_to_server: bool = False):
+        super().__init__(url, req_type, abr, resolution, fps, to_h264, download_to_server)
 
     async def _get_meta(self, yt: AsyncYouTube, streams: StreamQuery) -> dict:
         meta = {
@@ -142,6 +142,8 @@ class PyTubeDownloader(AbstractDownloader):
             )
 
             download_url = resp.json()['download_url']
+            self.already_downloaded = True
+            self.download_sub_type = 'mp4'
 
         elif self.req_type == 'video':
             stream = streams.filter(only_video=True)
@@ -179,6 +181,8 @@ class PyTubeDownloader(AbstractDownloader):
                 vid = stream.order_by('fps').desc().first()
 
                 download_url = vid.url if vid else ''
+            
+            self.download_sub_type = vid.subtype if vid else ''
 
         elif self.req_type == 'audio':
             stream = streams.filter(only_audio=True)
@@ -191,6 +195,7 @@ class PyTubeDownloader(AbstractDownloader):
                 aud = stream.order_by('abr').desc().first()
 
             download_url = aud.url if aud else ''
+            self.download_sub_type = aud.subtype if aud else ''
 
         return ExtractInfo.model_validate({
             "download_url": download_url,

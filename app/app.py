@@ -4,10 +4,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import hashlib
 from pathlib import Path
+from urllib.parse import quote
 
 from src.types import API
 from src.downloader import Downloader
 from src.utils import HttpxAsyncClient, safe_filename
+from src.cache import add_to_cache, get_from_cache
 from src import close_event
 
 async def lifespan(app: FastAPI):
@@ -38,16 +40,23 @@ async def quality(quality: API.Quality):
     '''得到一個 url 的資訊，包含解析度、音質等等......'''
     url = quality.url
     try:
-        downloader = Downloader(url, 'meta')
-        await downloader.run()
-        assert downloader.data and downloader.data.meta
-        downloader.data.meta.abr.reverse()
-        downloader.data.meta.fps.reverse()
-        downloader.data.meta.resolution.reverse()
+        downloader = await get_from_cache(url, 'meta')
+        if not downloader:
+            downloader = Downloader(url, 'meta')
+            await downloader.run()
+            assert downloader.data and downloader.data.meta
+            downloader.data.meta.abr.reverse()
+            downloader.data.meta.fps.reverse()
+            downloader.data.meta.resolution.reverse()
         meta = downloader.get_meta()
+
+        # add to cache
+        try: add_to_cache(downloader)
+        except: ...
+
+        return meta
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return meta
 
 @app.post('/download')
 async def download(download: API.Download):
@@ -58,12 +67,18 @@ async def download(download: API.Download):
     fps = download.fps
     req_type = download.type
 
-    downloader = Downloader(url, req_type, abr, resolution, fps)
+    downloader = await get_from_cache(url, req_type, abr, resolution, fps)
+    if not downloader:
+        downloader = Downloader(url, req_type, abr, resolution, fps, download_to_server=download.download_to_server)
 
     try:
         await downloader.run()
         assert downloader.data
         download_url = downloader.data.download_url
+
+        # add to cache
+        try: add_to_cache(downloader)
+        except: ...
     except Exception as e:
         raise HTTPException(status_code=500, detail='Error running downloader: ' + str(e))
     
@@ -91,8 +106,11 @@ async def download(download: API.Download):
             async for chunk in resp.aiter_bytes():
                 yield chunk
 
+    filename = safe_filename(downloader.data.title)
+    filename = quote(filename)
+
     headers = {
-        "Content-Disposition": f'attachment; filename="{safe_filename(downloader.data.title)}"',
+        "Content-Disposition": f"attachment; filename*=UTF-8''{filename}",
     }
 
     return StreamingResponse(stream(), media_type=media_type, headers=headers)

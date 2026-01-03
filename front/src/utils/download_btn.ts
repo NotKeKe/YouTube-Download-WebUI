@@ -6,6 +6,8 @@ export function startDownload() {
     const resolution = (document.getElementById('resolution') as HTMLSelectElement).value;
     const fps = (document.getElementById('fps') as HTMLSelectElement).value;
 
+    const downloadToServer = (document.getElementById('download-to-server') as HTMLInputElement).checked;
+
     const downloadBtn = document.getElementById('start-download') as HTMLButtonElement;
 
     if (!url) {
@@ -27,7 +29,8 @@ export function startDownload() {
                 type: reqMediaType,
                 abr: abr,
                 resolution: resolution,
-                fps: fps
+                fps: fps,
+                download_to_server: downloadToServer
             })
         })
             .then(resp => {

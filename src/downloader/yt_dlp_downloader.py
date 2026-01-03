@@ -13,7 +13,7 @@ from config import PORT
 
 logger = logging.getLogger(__name__)
 
-def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractInfo | None:
+def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> tuple[ExtractInfo, str] | None: # tuple[ExtractInfo, sub_type]
     try:
         with yt_dlp.YoutubeDL(yt_dlp_options) as ydl: # type: ignore
             info = ydl.extract_info(url, download=False)
@@ -27,6 +27,15 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
                 'abr': set(),
                 'fps': set(),
             }
+            
+            # get subtype
+            sub_type = ''
+            if req_type == 'video':
+                sub_type = 'mp4'
+            elif req_type == 'audio':
+                sub_type = info.get('audio_ext', '')
+            elif req_type == 'video+audio':
+                sub_type = info.get('video_ext', '')
 
             for f in info['formats']: # type: ignore
                 if f['vcodec'] == 'none' and f['acodec'] == 'none': continue
@@ -46,7 +55,8 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
                     meta['abr'].add(abr)
 
             for item in ('resolution', 'abr', 'fps'):
-                new_ls = [int(x) for x in meta[item] if x]
+                extra = 1 if item == 'abr' else 0 # yt dlp 好像要 +1 才找得到
+                new_ls = [int(x) + extra for x in meta[item] if x]
                 new_ls.sort()
                 meta[item] = new_ls
 
@@ -54,7 +64,7 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
             if req_type == 'meta':
                 return ExtractInfo.model_validate({
                     'meta': VideoMeta.model_validate(meta)
-                })
+                }), sub_type
 
             # get subtitle
             subtitles = defaultdict(list)
@@ -71,6 +81,11 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
 
                         subtitles[lang].append(resp.text) # must be srt
 
+            # for test
+            import orjson
+            from pathlib import Path
+            Path('test.json').write_bytes(orjson.dumps(info, option=orjson.OPT_INDENT_2))
+
             return ExtractInfo.model_validate({
                 "download_url": info.get("url", ''),
                 "thumbnail_url": info.get("thumbnail", ''),
@@ -79,14 +94,14 @@ def _run_it(yt_dlp_options: dict, url: str, req_type: DownloadType) -> ExtractIn
                 'subtitles': subtitles,
                 'meta': VideoMeta.model_validate(meta),
                 'requested_formats': info.get('requested_formats', []),
-            })
+            }), sub_type
         
     except Exception as e:
         logger.error('yt-dlp Download failed, ', exc_info=True)
 
 class YtDlpDownloader(AbstractDownloader):
-    def __init__(self, url: str, req_type: DownloadType, abr: int = -1, resolution: int = -1, fps: int = -1, to_h264: bool = False):
-        super().__init__(url, req_type, abr, resolution, fps, to_h264)
+    def __init__(self, url: str, req_type: DownloadType, abr: int = -1, resolution: int = -1, fps: int = -1, to_h264: bool = False, download_to_server: bool = False):
+        super().__init__(url, req_type, abr, resolution, fps, to_h264, download_to_server)
 
     def _decide_format(self) -> str:
         if self.req_type == 'meta': return "best"
@@ -146,9 +161,12 @@ class YtDlpDownloader(AbstractDownloader):
         logger.info(f'yt-dlp option-format: {new_option}')
             
         loop = asyncio.get_running_loop()
-        data = await loop.run_in_executor(MultiExecutor, _run_it, new_option, self.url, self.req_type) # type: ignore
-        if not data:
+        result = await loop.run_in_executor(MultiExecutor, _run_it, new_option, self.url, self.req_type) # type: ignore
+        if not result:
             raise
+
+        data, sub_type = result
+        self.download_sub_type = sub_type
 
         # bestvideo+bestaudio 會回傳兩個連結
         if '+' in new_option['format']:
@@ -198,6 +216,7 @@ class YtDlpDownloader(AbstractDownloader):
             )
 
             data.download_url = resp.json()['download_url']
+            self.already_downloaded = True
 
         assert isinstance(data, ExtractInfo)
         return data

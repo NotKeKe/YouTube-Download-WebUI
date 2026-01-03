@@ -12,6 +12,7 @@ function App() {
 
                 <nav>
                     <a href="/" target="_blank">Home</a>
+                    <a href="/docs" target="_blank">Docs</a>
                 </nav>
 
                 <a href="https://www.wales.com.tw" target="_blank">My Website</a>
@@ -55,6 +56,14 @@ function App() {
                             <option value="-1">Best</option>
                         </select>
                     </div>
+                </div>
+
+                <div className="extra-options">
+                    <span>Extra Options</span>
+                    <label className="checkbox-group">
+                        <input type="checkbox" id="download-to-server" name="download-to-server" />
+                        <span>Download to Server</span>
+                    </label>
                 </div>
 
                 <button id="start-download" onClick={startDownload} className="btn">Start Download</button>

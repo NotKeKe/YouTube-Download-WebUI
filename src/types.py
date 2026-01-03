@@ -15,6 +15,7 @@ class API:
         abr: int = -1 
         resolution: int = -1
         fps: int = -1
+        download_to_server: bool = False    
 
     class AddDownloadUrl(BaseModel):
         file_path: str
@@ -35,3 +36,5 @@ class ExtractInfo(BaseModel):
     subtitles: dict[str, list[str]] = Field(default_factory=dict)
     meta: Optional[VideoMeta] = None
     requested_formats: list[dict[str, Any]] = Field(default_factory=list)
+
+DownloadStats = Literal['downloading', 'none', 'completed']
