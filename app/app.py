@@ -18,15 +18,20 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan) # type: ignore
 # css, js
-app.mount('/static', StaticFiles(directory='./front/static'))
+# 攔截 /assets 路徑請求
+app.mount('/assets', StaticFiles(directory='./front/dist/assets'))
 # html
-tmplates = Jinja2Templates(directory='./front/templates')
+tmplates = Jinja2Templates(directory='./front/dist')
 
 download_tokens: dict[str, Path] = {} # [hash token, path]
 
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
     return tmplates.TemplateResponse('index.html', {'request': request})
+
+@app.get('/icon.png')
+async def icon():
+    return FileResponse('./front/dist/icon.png')
 
 @app.post('/quality', response_class=JSONResponse)
 async def quality(quality: API.Quality):
