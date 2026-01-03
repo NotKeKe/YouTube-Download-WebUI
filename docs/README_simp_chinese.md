@@ -26,6 +26,9 @@
 - **Docker 支持**：提供 Docker 镜像文件，便于部署。
 - **自动开启**：启动程序时自动开启浏览器 (在非 Docker 环境时生效)。
 
+## 📸 Demo
+<img src="demo.png" width="800" height="auto" style="border-radius: 10px;"/>
+
 ## 🚀 快速开始
 
 <details>

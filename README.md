@@ -26,6 +26,9 @@
 - **Docker 支援**：提供 Docker 映像檔，便於部署。
 - **自動開啟**：啟動程式時自動開啟瀏覽器 (在非 Docker 環境時生效)。
 
+## 📸 Demo
+<img src="docs/demo.png" width="800" height="auto" style="border-radius: 10px;"/>
+
 ## 🚀 快速開始
 
 <details>

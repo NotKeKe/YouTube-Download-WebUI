@@ -26,6 +26,9 @@ A YouTube video and audio download web interface based on FastAPI + React.
 - **Docker Support**: Provides Docker images for easy deployment.
 - **Auto-open**: Automatically opens the browser when the program starts (effective in non-Docker environments).
 
+## 📸 Demo
+<img src="demo.png" width="800" height="auto" style="border-radius: 10px;"/>
+
 ## 🚀 Quick Start
 
 <details>

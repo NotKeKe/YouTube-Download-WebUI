@@ -12,6 +12,7 @@ wheels/
 
 logs/*
 data/*
+front/old
 test_export
 
 test.json
