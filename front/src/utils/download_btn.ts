@@ -65,11 +65,11 @@ export function startDownload() {
                 a.remove();
                 URL.revokeObjectURL(downloadUrl);
                 currInfoSpan.textContent = `Yeahhhh we got a ${reqMediaType}!!`;
+                downloadBtn.disabled = false;
             });
     } catch (err: any) {
         console.error(err);
         currInfoSpan.textContent = `Error downloading: ${err.message}`;
-    } finally {
         downloadBtn.disabled = false;
     }
 }

@@ -1,5 +1,4 @@
 .venv
-.env.example
 front/dist
 front/node_modules
 __pycache__

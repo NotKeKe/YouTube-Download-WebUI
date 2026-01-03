@@ -7,10 +7,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT:-8127}:8127"
-    env_file:
-      - .env
     environment:
       RUNNING_IN_DOCKER: "1"
     volumes:
-      - .:/app
+      - ./data:/app/data
+      - ./logs:/app/logs
     restart: unless-stopped
